@@ -1,85 +1,100 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import CalendarInfo from "./utils/calendarInfo";
+
+const calendar = new CalendarInfo();
+
+const dayNames = calendar.dayNames;
+
+const days = calendar.getCalendarDays(6, calendar.getThisMonthComps());
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div class="row">
+    <div class="col">
+      <div class="calendar-container">
+        <div class="week">
+          <div class="weekday" v-for="dayName in dayNames" :key="dayName">
+            {{ dayName }}
+          </div>
+          <div
+            v-for="day in days"
+            :key="day.id"
+            class="day"
+            :class="[
+              `weekday-${day.weekDayPosition}`,
+              {
+                'day-today': day.isToday,
+                'prev-month': day.inPrevMonth,
+                'next-month': day.inNextMonth,
+              },
+            ]"
+          >
+            <div class="day-content">
+              <span class="day-label">{{ day.label }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.col {
+  flex: 0 0 70%;
+  max-width: 70%;
 }
-
-nav {
-  width: 100%;
-  font-size: 12px;
+.calendar-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+}
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  position: relative;
+  width: min(95%, 70rem);
+  border: 1px solid var(--gray);
+  border-radius: var(--table-radius);
+  overflow: hidden;
+}
+.weekday {
+  border-bottom: 1px solid var(--gray);
+  border-left: 1px solid var(--gray);
+  background-color: #f9fafe;
+  padding: 10px 0px;
+  color: #999ba5;
   text-align: center;
-  margin-top: 2rem;
+  font-size: 0.9rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.weekday:first-child {
+  border-left: none;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.day {
+  padding: 3px 5px;
+  border-right: 1px solid var(--gray);
+  border-top: 1px solid var(--gray);
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.weekday-6 {
+  border-right: none;
 }
 
-nav a:first-of-type {
-  border: 0;
+.prev-month .day-label,
+.next-month .day-label {
+  color: #b3b3b3;
+}
+.day-content {
+  position: relative;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
 </style>
